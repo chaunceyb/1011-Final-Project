@@ -25,7 +25,10 @@ optional arguments:
                         Choose the type of RNN to use.
 ```
 
-Before running the script, make sure that the data is copied into the `./data` directory. 
+Before running the script, make sure:
+
+-  the data is copied into the `./data/` directory. 
+- the directory `./state/`, `./display` exist.
 
 
 
