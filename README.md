@@ -1,4 +1,4 @@
-# 1011-Final-Project
+# 1011 Final Project
 
 ## Usage
 
@@ -30,5 +30,9 @@ Before running the script, make sure:
 -  the data is copied into the `./data/` directory. 
 - the directory `./state/`, `./display` exist.
 
+To train the self-attention model, please use the python file in the `./other/` directory. 
 
+
+
+## Acknowlegment
 
