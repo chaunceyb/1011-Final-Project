@@ -221,7 +221,7 @@ def val_plot_align(args, cons, val_loader, encoder, decoder, src_lang, tgt_lang)
             loss = torch.sum(loss).item()
         if True:
             plt.figure()
-            ind = 12
+            ind = 2
             src_sen = x['sen'][ind]
             tmpx, tmpy = all_decoder_outputs[ind].topk(1, dim=1)
             tgt_sen = tmpy.squeeze()
@@ -298,10 +298,18 @@ def do_train(args, cons, train_loader, val_loader, encoder, decoder, encoder_opt
 def eval(args, cons, loader, encoder, decoder, src_lang, tgt_lang, display_ex = True, group_by_len = False):
     global device, BATCH_SIZE, PAD_IDX, UNK_IDX, SOS_IDX, EOS_IDX
     device, BATCH_SIZE, PAD_IDX, UNK_IDX, SOS_IDX, EOS_IDX = cons
-
-    res, ref_streams, can_stream = translate.beam.do_beam_translate(args, cons, encoder, decoder, loader,
-                                                                    src_lang, tgt_lang, beam_size=15, output=False)
-    print('EVALUATION  with beam size of {}'.format(10))
+    if not args.output:
+        res, ref_streams, can_stream = translate.beam.do_beam_translate(args, cons, encoder, decoder, loader,
+                                                                    src_lang, tgt_lang, beam_size=args.evalbeam, output=False)
+    else:
+        res, ref_streams, can_stream, print_res = translate.beam.do_beam_translate(args, cons, encoder, decoder, loader,
+                                                                        src_lang, tgt_lang, beam_size=args.evalbeam, output=True)
+        spec = (args.language, args.model, args.rnn)
+        print(print_res, file = open('../display/{}_{}_{}_eval_translate.txt'.format(*spec), 'w'))
+        bleu = translate.BLEU.corpus_bleu(can_stream, ref_streams, smooth='none')
+        print('BLEU SCORE: {:.6f}'.format(bleu.score))
+        return bleu.score, res
+    print('EVALUATION  with beam size of {}'.format(args.evalbeam))
     if display_ex:
         print('<SOURCE>   : ' + ' '.join(res[0][0]))
         print('<REFERENCE>: ' + ' '.join(res[0][1]))
@@ -324,7 +332,6 @@ def eval(args, cons, loader, encoder, decoder, src_lang, tgt_lang, display_ex = 
             bleu_grouped[(bin[0] + bin[1]) / 2.0] = bleu.score
         spec = (args.language, args.model, args.rnn)
         pkl.dump(bleu_grouped, open('../display/{}_{}_{}_bleu_grouped.pkl'.format(*spec), 'wb'), pkl.HIGHEST_PROTOCOL)
-        return
 
     bleu = translate.BLEU.corpus_bleu(can_stream, ref_streams, smooth='none')
     print('BLEU SCORE: {:.6f}'.format(bleu.score))

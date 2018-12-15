@@ -67,12 +67,19 @@ class AttnDecoderRNN(nn.Module):
         self.embedding = nn.Embedding(output_size, hidden_size, padding_idx=PAD_IDX)
         self.embedding_dropout = nn.Dropout(dropout)
         self.dropout = nn.Dropout(self.dropout)
+
         if self.rnn_type == 'gru':
-            self.rnn = nn.GRU(hidden_size, hidden_size, n_layers, dropout=dropout, batch_first=True)
+            if self.attn_model != 'none':
+                self.rnn = nn.GRU(hidden_size, hidden_size, n_layers, dropout=dropout, batch_first=True)
+            else:
+                self.rnn = nn.GRU(hidden_size * 2, hidden_size, n_layers, dropout=dropout, batch_first=True)
         elif self.rnn_type == 'lstm':
-            self.rnn = nn.LSTM(hidden_size, hidden_size, n_layers, dropout=dropout, batch_first=True)
+            if self.attn_model != 'none':
+                self.rnn = nn.LSTM(hidden_size, hidden_size, n_layers, dropout=dropout, batch_first=True)
+            else:
+                self.rnn = nn.LSTM(hidden_size * 2, hidden_size, n_layers, dropout=dropout, batch_first=True)
         # TODO Middle size
-        self.fc1 = nn.Linear(hidden_size * 2, hidden_size)
+        self.fc1 = nn.Linear(hidden_size * 2 if attn_model != 'none' else hidden_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, output_size)
 
         # Choose attention model
@@ -81,20 +88,30 @@ class AttnDecoderRNN(nn.Module):
 
     def forward(self, input_seq, last_hidden, encoder_outputs, encoder_hidden, x_mask):
         #             B x tgt_len  L x B x H   B x src_len x H  L x B x H
+        # print(type(encoder_hidden))
         batch_size = input_seq.size(0)
         embedded = self.embedding(input_seq)
         embedded = self.embedding_dropout(embedded)
-        rnn_output, hidden = self.rnn(embedded, last_hidden)
+
         # B x tgt_len x H, L x B x H
         if self.attn_model != 'none':
+            rnn_output, hidden = self.rnn(embedded, last_hidden)
             # Attention
             attn_weights = self.attn(rnn_output, encoder_outputs, x_mask)  # B x tgt_len x src_len
             # B x tgt_len x H   B x src_len x H
             context = attn_weights.bmm(encoder_outputs)  # B x tgt_len x H
+            concat_input = torch.cat((rnn_output, context), 2)
         else:
+            if self.rnn_type == 'lstm':
+                encoder_hidden = encoder_hidden[0]
+                
+
             encoder_hidden = (encoder_hidden[self.n_layers - 1]).unsqueeze(1).repeat(1, input_seq.size(1), 1)# should be top layer, right?
             context = encoder_hidden
-        concat_input = torch.cat((rnn_output, context), 2)  # B x tgt_len x 2H
+            embedded = torch.cat((embedded, context), 2)
+            concat_input, hidden = self.rnn(embedded, last_hidden)
+
+         # B x tgt_len x 2H
         # FC 1
         concat_output = torch.tanh(self.fc1(concat_input))
         concat_output = self.dropout(concat_output)

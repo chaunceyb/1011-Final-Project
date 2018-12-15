@@ -162,6 +162,6 @@ def do_beam_translate(args, cons, encoder, decoder, dataloader, src_lang, tgt_la
                     print_res += '\nPREDICT: ' + ' '.join(tup[2])
 
     if output:
-        return res, print_res, ref_streams, sys_stream, print_res
+        return res, ref_streams, sys_stream, print_res
     else:
         return res, ref_streams, sys_stream

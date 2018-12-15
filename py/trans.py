@@ -59,8 +59,12 @@ parser.add_argument('-d', '--model', choices = ['attn', 'noattn', 'selfenc'], de
                     help = 'Choose the model type.')
 parser.add_argument('-n', '--rnn', choices = ['gru', 'lstm'], default = 'gru',
                     help = 'Choose the type of RNN to use.')
-# parser.add_argument('--limit_train_len', type=int, default=50,
-#                     help = 'The limit length of training data. Data longer than the criterion will not be trained on.')
+parser.add_argument('--output', action = 'store_true', default = False,
+                    help = 'Output the results of translation.')
+parser.add_argument('--evalbeam', type=int, default=5,
+                    help = 'The beam size used in the evaluation.')
+parser.add_argument('--beamgroup', action = 'store_true', default = False,
+                    help = 'Calculate the beam by the length of sentence.')
 args = parser.parse_args()
 
 
@@ -117,7 +121,7 @@ if args.action == 'train':
     translate.do.do_train(args, cons, train_loader, val_loader, encoder, decoder, encoder_optimizer, decoder_optimizer,
                           log, src_lang, tgt_lang, n_epochs=50)
 elif args.action == 'eval':
-    translate.do.eval(args, cons, test_loader, encoder, decoder, src_lang, tgt_lang)
+    translate.do.eval(args, cons, test_loader, encoder, decoder, src_lang, tgt_lang, group_by_len = args.beamgroup)
 
 elif args.action == 'plot':
     translate.do.val_plot_align(args, cons, val_loader, encoder, decoder, src_lang, tgt_lang)

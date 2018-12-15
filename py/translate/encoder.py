@@ -46,8 +46,11 @@ class EncoderRNN(nn.Module):
         # IMPORTANT: the pad_packed function also needs batch_first parameters
         if self.rnn_type == 'gru':
             hidden = self.transform(hidden, self.n_layers)
+
         elif self.rnn_type == 'lstm':
             hidden = [self.transform(h, self.n_layers) for h in hidden]
+            # print(type(hidden))
+
         return outputs, hidden  # HIDDEN: L x B x H
 
     def transform(self, x, num_layers):
