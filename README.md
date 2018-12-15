@@ -59,7 +59,7 @@ By adding the `-l vi` argument, the model will be trained using Vi-En corpus. Pl
 
 #### Options for development and debugging
 
-Since the corpus file is very large, you can prepare a smaller subset of the dataset during developing and debugging. Save the reduced dataset in the `./data/mini-{src_lang}-{tot_lang}/` directory
+Since the corpus file is very large, you can prepare a smaller subset of the dataset during developing and debugging. Save the reduced dataset in the `./data/mini-{src_lang}-{tgt_lang}/` directory
 
 Also, adding `-r` will enable the read only mode, preventing the script to overwrite existing saved model
 
