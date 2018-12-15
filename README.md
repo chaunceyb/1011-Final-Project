@@ -71,6 +71,10 @@ While we use GRU as our default RNN, you can choose `-n lstm` to switch to LSTM 
 
 Besides regular attention, you can also select model without attention, or self-attention as encoder. A fully self-attention model is available in `./other/` directory.
 
+#### Plotting the Attention Alignment
+
+Using the argument `plot` can create a graph of attention alignment in the `./display/` directory. Note that some characters may not render in all environments due to missing fonts. 
+
 ## Features for Evaluations
 
 Below are the options for the evaluation. 
@@ -97,7 +101,7 @@ Adding `--beamgroup` will generate beam score in several group of sentence lengt
 
 Part of the codes are adapted from existing, open-source projects. Includes:
 
-- Our defination of the beam class is based on [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) , which is distributed under MIT License. Many of our work is also inspired by this project, though implemented individually. 
+- Our defination of the beam class is based on [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) , which is distributed under MIT License. Some of our work is also inspired by this project, though implemented individually. 
 - Our self-attention scripts are based on [The Annotated Transformer](http://nlp.seas.harvard.edu/2018/04/03/attention.html)
 - The BLEU score calculation is from [SacreBLEU](https://github.com/mjpost/sacreBLEU). It is licensed under the Apache 2.0. The original license is in the `LICENSE` directory. 
 
