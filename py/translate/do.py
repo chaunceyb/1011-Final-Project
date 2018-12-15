@@ -181,7 +181,6 @@ def val_epoch(args, cons, val_loader, encoder, decoder, src_lang, tgt_lang, disp
 def val_plot_align(args, cons, val_loader, encoder, decoder, src_lang, tgt_lang):
     global device, BATCH_SIZE, PAD_IDX, UNK_IDX, SOS_IDX, EOS_IDX
     device, BATCH_SIZE, PAD_IDX, UNK_IDX, SOS_IDX, EOS_IDX = cons
-    zhfont = matplotlib.font_manager.FontProperties(fname=r'../../simhei.ttf', size=14)
     loss_total = 0
     for i, (x, y) in enumerate(val_loader):
         encoder.eval()
@@ -238,7 +237,6 @@ def val_plot_align(args, cons, val_loader, encoder, decoder, src_lang, tgt_lang)
             print(' '.join([src_lang.id2token[i] for i in src_sen]))
 
             fig, ax = plt.subplots(figsize=(10, 8))
-            plt.rcParams['font.sans-serif'] = ['simhei']
 
             sns.heatmap(all_decoder_attn[ind][:tgt_len, :src_len].detach().to('cpu').numpy(),
                         xticklabels = [src_lang.id2token[i] for i in src_sen],
