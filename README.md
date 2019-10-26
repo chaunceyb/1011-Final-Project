@@ -1,5 +1,7 @@
 # 💬Neural Machine Translation
 
+![](https://img.shields.io/pypi/pyversions/torch)
+
 > This is originally the final project of *DS*- *GA 1011*: Natural Language Processing with Representation Learning
 
 ## Usage
