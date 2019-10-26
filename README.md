@@ -1,6 +1,6 @@
-# 1011 Final Project
+# 💬Neural Machine Translation
 
-This is the code of the final project of *DS*- *GA 1011*: Natural Language Processing with Representation Learning
+> This is originally the final project of *DS*- *GA 1011*: Natural Language Processing with Representation Learning
 
 ## Usage
 
